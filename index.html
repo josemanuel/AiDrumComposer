@@ -1015,6 +1015,20 @@ input[type=range].pitch::-webkit-slider-thumb { background: var(--accent-purple)
   outline: none;
 }
 
+/* ═══ AI APIKEY ROW ═══ */
+.ai-apikey-row {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.2);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+}
+.ai-apikey-row input:focus { border-color: var(--accent-cyan) !important; }
+#ai-apikey-status.ok  { color: var(--accent-green); }
+#ai-apikey-status.err { color: var(--accent-orange); }
+
 /* ═══ HUMANIZE INDICATOR ═══ */
 .humanize-indicator {
   display: inline-block;
@@ -1132,45 +1146,6 @@ input[type=range].pitch::-webkit-slider-thumb { background: var(--accent-purple)
     <div id="sequencer-grid">
       <div class="seq-header" id="seq-header"></div>
       <div id="seq-rows"></div>
-    </div>
-  </div>
-  
-  <!-- AI PATTERN GENERATOR -->
-  <div class="ai-panel" id="ai-panel">
-    <div class="ai-panel-title">AI PATTERN GENERATOR — Powered by Claude</div>
-    <div class="flex items-center gap-3" style="flex-wrap:wrap">
-      <div>
-        <div class="text-xs text-sec" style="margin-bottom:6px;letter-spacing:0.08em;text-transform:uppercase">Style</div>
-        <div class="ai-style-grid" id="ai-style-grid">
-          <button class="ai-style-btn active" data-style="house">House</button>
-          <button class="ai-style-btn" data-style="techno">Techno</button>
-          <button class="ai-style-btn" data-style="trap">Trap</button>
-          <button class="ai-style-btn" data-style="hiphop">Hip-Hop</button>
-          <button class="ai-style-btn" data-style="dnb">D&amp;B</button>
-          <button class="ai-style-btn" data-style="breakbeat">Break</button>
-          <button class="ai-style-btn" data-style="afrobeats">Afro</button>
-          <button class="ai-style-btn" data-style="jazz">Jazz</button>
-          <button class="ai-style-btn" data-style="reggaeton">Reggaeton</button>
-          <button class="ai-style-btn" data-style="cumbia">Cumbia</button>
-        </div>
-      </div>
-      <div class="flex flex-col gap-2" style="flex-shrink:0">
-        <div class="flex items-center gap-2">
-          <span class="text-xs text-sec">Complexity:</span>
-          <input type="range" id="ai-complexity" min="1" max="5" value="3" style="width:70px">
-          <span class="knob-val" id="ai-complexity-val" style="font-size:12px">3</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs text-sec">Target:</span>
-          <select id="ai-target" style="font-size:11px">
-            <option value="all">All instruments</option>
-            <option value="rhythm">Rhythm only (Kick/Snare/Hat)</option>
-            <option value="percussion">Percussion only</option>
-          </select>
-        </div>
-        <button class="ai-generate-btn" id="ai-generate-btn">✦ Generate Pattern</button>
-        <div class="ai-status" id="ai-status"></div>
-      </div>
     </div>
   </div>
   
@@ -1403,6 +1378,63 @@ input[type=range].pitch::-webkit-slider-thumb { background: var(--accent-purple)
     <button class="modal-close" id="vel-modal-close">✕</button>
     <div class="modal-title" id="vel-modal-title">Step Velocity</div>
     <div class="vel-grid" id="vel-grid"></div>
+  </div>
+</div>
+
+<!-- AI PATTERN GENERATOR — at the bottom -->
+<div class="ai-panel" id="ai-panel" style="margin:0 12px 12px">
+  <div class="ai-panel-title">✦ AI PATTERN GENERATOR — Powered by Claude</div>
+
+  <!-- API KEY CONFIG ROW -->
+  <div class="ai-apikey-row" id="ai-apikey-row">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--accent-yellow)"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+    <span class="text-xs text-sec" style="flex-shrink:0">API Key:</span>
+    <input type="password" id="ai-apikey-input" placeholder="sk-ant-api03-…  (guardada solo en esta sesión)" autocomplete="off"
+      style="flex:1;background:var(--bg-3);border:1px solid var(--border);color:var(--text-pri);border-radius:var(--r-sm);padding:5px 10px;font-family:var(--font-ui);font-size:12px;outline:none;min-width:0">
+    <button class="btn btn-ghost btn-sm" id="ai-apikey-save" style="flex-shrink:0">Guardar</button>
+    <button class="btn btn-ghost btn-sm" id="ai-apikey-clear" style="flex-shrink:0;color:var(--accent-orange)" title="Borrar API key">✕</button>
+    <span id="ai-apikey-status" class="text-xs" style="flex-shrink:0"></span>
+  </div>
+  <div class="text-xs text-dim" style="margin-bottom:10px;padding-left:2px">
+    Necesitas una API key de <a href="https://console.anthropic.com/" target="_blank" style="color:var(--accent-cyan);text-decoration:none">console.anthropic.com</a>.
+    La key <strong>nunca</strong> se guarda en disco — solo en <code>sessionStorage</code> mientras el navegador esté abierto.
+    Requiere que el navegador tenga acceso a <code>api.anthropic.com</code> (desactiva extensiones de bloqueo o usa un proxy si obtienes error CORS).
+  </div>
+
+  <!-- CONTROLS ROW -->
+  <div class="flex items-center gap-3" style="flex-wrap:wrap">
+    <div>
+      <div class="text-xs text-sec" style="margin-bottom:6px;letter-spacing:0.08em;text-transform:uppercase">Estilo</div>
+      <div class="ai-style-grid" id="ai-style-grid">
+        <button class="ai-style-btn active" data-style="house">House</button>
+        <button class="ai-style-btn" data-style="techno">Techno</button>
+        <button class="ai-style-btn" data-style="trap">Trap</button>
+        <button class="ai-style-btn" data-style="hiphop">Hip-Hop</button>
+        <button class="ai-style-btn" data-style="dnb">D&amp;B</button>
+        <button class="ai-style-btn" data-style="breakbeat">Break</button>
+        <button class="ai-style-btn" data-style="afrobeats">Afro</button>
+        <button class="ai-style-btn" data-style="jazz">Jazz</button>
+        <button class="ai-style-btn" data-style="reggaeton">Reggaeton</button>
+        <button class="ai-style-btn" data-style="cumbia">Cumbia</button>
+      </div>
+    </div>
+    <div class="flex flex-col gap-2" style="flex-shrink:0">
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-sec">Complejidad:</span>
+        <input type="range" id="ai-complexity" min="1" max="5" value="3" style="width:70px">
+        <span class="knob-val" id="ai-complexity-val" style="font-size:12px">3</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-sec">Destino:</span>
+        <select id="ai-target" style="font-size:11px">
+          <option value="all">Todos los instrumentos</option>
+          <option value="rhythm">Solo ritmo (Kick/Snare/Hat)</option>
+          <option value="percussion">Solo percusión</option>
+        </select>
+      </div>
+      <button class="ai-generate-btn" id="ai-generate-btn">✦ Generar Patrón</button>
+      <div class="ai-status" id="ai-status"></div>
+    </div>
   </div>
 </div>
 
@@ -1939,80 +1971,108 @@ function bufferToWAV(audioBuffer) {
 // ─── AI PATTERN GENERATION ────────────────────────────────────
 let aiSelectedStyle = 'house';
 
+function getApiKey() {
+  return sessionStorage.getItem('rx11_anthropic_key') || '';
+}
+
 async function generateAIPattern() {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    showToast('Introduce tu API key de Anthropic primero', 'error');
+    document.getElementById('ai-apikey-input').focus();
+    return;
+  }
+
   const btn = document.getElementById('ai-generate-btn');
   const status = document.getElementById('ai-status');
   btn.disabled = true;
   status.className = 'ai-status thinking';
-  status.textContent = '✦ Claude is composing…';
-  
+  status.textContent = '✦ Claude está componiendo…';
+
   const complexity = document.getElementById('ai-complexity').value;
   const target = document.getElementById('ai-target').value;
   const style = aiSelectedStyle;
-  const instNames = INSTRUMENT_DEFS.map(d => d.name).join(', ');
-  
+
   const targetDesc = target === 'all' ? 'all 12 instruments' :
     target === 'rhythm' ? 'only Kick, Snare, Clap, Closed Hat, Open Hat' :
     'only Tom Hi, Tom Mid, Tom Lo, Crash, Ride, Perc 1, Perc 2';
-  
-  const prompt = `You are an expert music producer. Generate a ${style} drum pattern for a 16-step sequencer.
-Instruments available (index 0-11): ${instNames}.
-Target: ${targetDesc}.
-Complexity level: ${complexity}/5 (1=minimal, 5=very busy).
-BPM context: ~${state.bpm} BPM.
 
-Return ONLY a JSON object. No explanation. Format:
-{
-  "steps": {
-    "0": [step0,step1,...,step15],
-    "1": [step0,step1,...,step15],
-    ...
-  },
-  "description": "brief one-line description"
-}
-Each step value: 0 (off), or 0.1-1.0 for velocity.
-For instruments NOT in the target, use all zeros.
-Instrument indices: 0=Kick, 1=Snare, 2=Clap, 3=ClosedHat, 4=OpenHat, 5=TomHi, 6=TomMid, 7=TomLo, 8=Crash, 9=Ride, 10=Perc1, 11=Perc2.
-Make it authentic ${style} style. ${style === 'house' ? 'Four-on-the-floor kick, off-beat hats.' : ''}${style === 'trap' ? 'Sparse kick, snappy snare on 3&, rapid hi-hat triplets.' : ''}${style === 'techno' ? 'Driving kick, heavy closed hats, minimal snare.' : ''}${style === 'dnb' ? 'Breakbeat feel, kick on 1 and "and" of 2, snare on 3.' : ''}${style === 'hiphop' ? 'Boom-bap: kick on 1&3, snare on 2&4, swinging hats.' : ''}${style === 'breakbeat' ? 'Syncopated kick, rolling hi-hats, surprise snare placements.' : ''}${style === 'afrobeats' ? 'Polyrhythmic percussion, steady hi-hats, accented snare.' : ''}${style === 'jazz' ? 'Ride cymbal dominant, sparse kick, brushy snare.' : ''}${style === 'reggaeton' ? 'Dembow rhythm: kick on 1, snare+kick on "and" of 2.' : ''}${style === 'cumbia' ? 'Clave-based: maracas-like hats, kick on beat 1, syncopated snare.' : ''}`;
+  const styleHints = {
+    house:     'Four-on-the-floor kick on every beat (steps 0,4,8,12), off-beat closed hats, snare on 2&4.',
+    techno:    'Driving kick on every beat, heavy closed hats on 8ths, sparse snare.',
+    trap:      'Sparse kick, snappy snare on beat 3-and, rapid hi-hat triplets and rolls.',
+    hiphop:    'Boom-bap: kick on 1 and 3, snare on 2 and 4, swinging 8th hats.',
+    dnb:       'Two-step breakbeat: kick on 1 and the-and-of-2, snare on 3.',
+    breakbeat: 'Syncopated kick, rolling hats with accents, surprise snare placements.',
+    afrobeats: 'Polyrhythmic percussion, steady 8th hats, off-beat kick and accented snare.',
+    jazz:      'Ride cymbal dominant with swing feel, sparse kick, light snare.',
+    reggaeton: 'Dembow: kick on 1, snare+kick on the-and-of-2, steady hats.',
+    cumbia:    'Clave-based: maracas-like hats every 8th, kick on beat 1, syncopated snare.',
+  };
+
+  const prompt = `You are an expert music producer. Generate a ${style} drum pattern for a 16-step sequencer at ~${state.bpm} BPM.
+Instruments (index 0-11): 0=Kick, 1=Snare, 2=Clap, 3=ClosedHat, 4=OpenHat, 5=TomHi, 6=TomMid, 7=TomLo, 8=Crash, 9=Ride, 10=Perc1, 11=Perc2.
+Target: ${targetDesc}. Complexity: ${complexity}/5.
+Style notes: ${styleHints[style] || ''}
+Return ONLY valid JSON, no markdown, no explanation:
+{"steps":{"0":[v,v,v,v,v,v,v,v,v,v,v,v,v,v,v,v],"1":[...],"2":[...],"3":[...],"4":[...],"5":[...],"6":[...],"7":[...],"8":[...],"9":[...],"10":[...],"11":[...]},"description":"one line"}
+Each array has exactly 16 values: 0=off, 0.1–1.0=velocity. Instruments outside target must be all zeros.`;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-allow-browser': 'true',
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 800,
         messages: [{ role: 'user', content: prompt }]
       })
     });
-    
-    if (!response.ok) throw new Error('API error ' + response.status);
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${response.status}`);
+    }
+
     const data = await response.json();
     const text = data.content.map(b => b.text || '').join('');
-    const clean = text.replace(/```json|```/g, '').trim();
+    const clean = text.replace(/```json|```/gi, '').trim();
     const result = JSON.parse(clean);
-    
-    // Apply to current pattern
+
     pushUndo();
     const pat = state.patterns[state.currentPattern];
     for (let i = 0; i < NUM_INSTRUMENTS; i++) {
       const row = result.steps[String(i)];
       if (!row) continue;
       for (let s = 0; s < state.numSteps; s++) {
-        const v = row[s] || 0;
-        pat[i][s] = v > 0 ? { vel: Math.min(1.0, parseFloat(v)) } : null;
+        const v = parseFloat(row[s]) || 0;
+        pat[i][s] = v > 0 ? { vel: Math.min(1.0, v) } : null;
       }
     }
     renderAllSteps();
     renderPatternBank();
-    
+
     status.className = 'ai-status';
-    status.textContent = result.description ? `✓ ${result.description}` : '✓ Pattern generated!';
-    showToast(`AI pattern (${style}) loaded!`, 'success');
+    status.textContent = result.description ? `✓ ${result.description}` : '✓ Patrón generado';
+    showToast(`Patrón AI (${style}) cargado!`, 'success');
+
   } catch(e) {
     status.className = 'ai-status';
-    status.textContent = '✗ Error: ' + e.message;
-    showToast('AI generation failed: ' + e.message, 'error');
+    let msg = e.message;
+    if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('CORS')) {
+      msg = 'Error de red / CORS. Comprueba tu conexión y que api.anthropic.com no esté bloqueada.';
+    } else if (msg.includes('401') || msg.toLowerCase().includes('invalid_api_key') || msg.toLowerCase().includes('authentication')) {
+      msg = 'API key inválida — comprueba que sea correcta en console.anthropic.com.';
+    } else if (msg.includes('429')) {
+      msg = 'Rate limit alcanzado. Espera unos segundos.';
+    }
+    status.textContent = '✗ ' + msg;
+    showToast('Error AI: ' + msg.substring(0, 60), 'error');
   }
   btn.disabled = false;
 }
@@ -3737,6 +3797,40 @@ function bindEvents() {
     document.getElementById('ai-complexity-val').textContent = this.value;
   };
   document.getElementById('ai-generate-btn').onclick = generateAIPattern;
+
+  // ── API Key management ──
+  const keyInput = document.getElementById('ai-apikey-input');
+  const keyStatus = document.getElementById('ai-apikey-status');
+  // Restore key from sessionStorage on load
+  const savedKey = sessionStorage.getItem('rx11_anthropic_key');
+  if (savedKey) {
+    keyInput.value = savedKey;
+    keyStatus.textContent = '✓ Key guardada';
+    keyStatus.className = 'text-xs ok';
+  }
+  document.getElementById('ai-apikey-save').onclick = () => {
+    const k = keyInput.value.trim();
+    if (!k.startsWith('sk-ant-')) {
+      keyStatus.textContent = '✗ Formato inválido (debe empezar por sk-ant-)';
+      keyStatus.className = 'text-xs err';
+      return;
+    }
+    sessionStorage.setItem('rx11_anthropic_key', k);
+    keyStatus.textContent = '✓ Guardada en sesión';
+    keyStatus.className = 'text-xs ok';
+    showToast('API key guardada para esta sesión', 'success');
+  };
+  document.getElementById('ai-apikey-clear').onclick = () => {
+    sessionStorage.removeItem('rx11_anthropic_key');
+    keyInput.value = '';
+    keyStatus.textContent = 'Borrada';
+    keyStatus.className = 'text-xs text-dim';
+    showToast('API key eliminada', 'info');
+  };
+  // Save on Enter
+  keyInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('ai-apikey-save').click();
+  });
 
   // ── NEW: Global FX tab ──
   const gfxBindings = [
